@@ -3,6 +3,8 @@ package ru.yandex.practicum.service;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.model.Film;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,7 @@ public class FilmService {
     private final List<Film> films = new ArrayList<>();
 
     // Переменная для уникального идентификатора фильма
-    private long nextFilmId = 1;
+    private Long idGenerator = 1L;
 
     // Метод для получения всех фильмов
     public List<Film> getAllFilms() {
@@ -23,7 +25,15 @@ public class FilmService {
 
     // Метод для создания нового фильма
     public Film createFilm(Film film) {
-        film.setId(nextFilmId++);
+        // Преобразование Date в LocalDate
+        LocalDate releaseDate = film.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Проверка даты релиза
+        if (releaseDate != null && releaseDate.isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new IllegalArgumentException("Дата релиза не может быть раньше 28 декабря 1895 года");
+        }
+
+        film.setId(generateId());
         films.add(film);
         return film;
     }
@@ -65,5 +75,9 @@ public class FilmService {
     // Метод для удаления фильма по идентификатору
     public void deleteFilm(Long id) {
         films.removeIf(film -> film.getId().equals(id));
+    }
+
+    private Long generateId() {
+        return idGenerator++;
     }
 }
