@@ -2,6 +2,8 @@ package ru.yandex.practicum.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.User;
@@ -18,6 +20,7 @@ public class UserController {
     private final UserService userService;
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -50,5 +53,38 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         log.info("Удаление пользователя с id={}", id);
         userService.deleteUser(id);
+    }
+
+    @PutMapping("/{userId}/friends/{friendId}")
+    public ResponseEntity<String> addFriend(
+            @PathVariable Long userId,
+            @PathVariable Long friendId
+    ) {
+        userService.addFriend(userId, friendId);
+        return ResponseEntity.ok("Friend added successfully");
+    }
+
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public ResponseEntity<String> removeFriend(
+            @PathVariable Long userId,
+            @PathVariable Long friendId
+    ) {
+        userService.removeFriend(userId, friendId);
+        return ResponseEntity.ok("Friend removed successfully");
+    }
+
+    @GetMapping("/{userId}/friends")
+    public List<User> getFriends(
+            @PathVariable Long userId
+    ) {
+        return userService.getFriends(userId);
+    }
+
+    @GetMapping("/{userId}/friends/common/{otherId}")
+    public List<User> getCommonFriends(
+            @PathVariable Long userId,
+            @PathVariable Long otherId
+    ) {
+        return userService.getCommonFriends(userId, otherId);
     }
 }
