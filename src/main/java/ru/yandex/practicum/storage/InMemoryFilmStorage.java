@@ -31,20 +31,20 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Long id, Film updatedFilm) {
-        Optional<Film> existingFilmOptional = getFilmById(id);
-
-        if (existingFilmOptional.isPresent()) {
-            Film existingFilm = existingFilmOptional.get();
-            // Обновление информации о фильме
-            existingFilm.setName(updatedFilm.getName());
-            existingFilm.setDescription(updatedFilm.getDescription());
-            existingFilm.setReleaseDate(updatedFilm.getReleaseDate());
-            existingFilm.setDuration(updatedFilm.getDuration());
-            return existingFilm;
-        } else {
-            throw new IllegalArgumentException("Фильм не найден");
-        }
+        return getFilmById(id)
+                .map(existingFilm -> {
+                    // Обновление информации о фильме
+                    existingFilm.setName(updatedFilm.getName());
+                    existingFilm.setDescription(updatedFilm.getDescription());
+                    existingFilm.setReleaseDate(updatedFilm.getReleaseDate());
+                    existingFilm.setDuration(updatedFilm.getDuration());
+                    return existingFilm;
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Фильм не найден"));
     }
+
+
+
 
     @Override
     public void deleteFilm(Long id) {
