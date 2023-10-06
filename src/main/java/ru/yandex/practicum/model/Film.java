@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,4 +38,12 @@ public class Film {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> likes = new HashSet<>();
+
+    @Transient
+    private LocalDate releaseDateAsLocalDate;
+
+    public void setReleaseDate(LocalDate releaseDate) {
+        this.releaseDate = java.sql.Date.valueOf(releaseDate);
+        this.releaseDateAsLocalDate = releaseDate;
+    }
 }
