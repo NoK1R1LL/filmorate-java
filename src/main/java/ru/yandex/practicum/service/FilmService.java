@@ -1,5 +1,7 @@
 package ru.yandex.practicum.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.model.User;
@@ -15,7 +17,8 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserService userService; // Внедряем UserService
+    private final UserService userService;
+    private final Logger logger = LoggerFactory.getLogger(FilmService.class); // Инициализация логгера
 
     public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
@@ -27,12 +30,15 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        LocalDate releaseDate = film.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate releaseDate = film.getReleaseDate();
 
         if (releaseDate != null && releaseDate.isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new IllegalArgumentException("Дата релиза не может быть раньше 28 декабря 1895 года");
+            String errorMessage = "Дата релиза не может быть раньше 28 декабря 1895 года";
+            logger.error(errorMessage);
+            throw new IllegalArgumentException(errorMessage);
         }
 
+        film.setReleaseDateAsLocalDate(releaseDate); // Установите дату релиза как LocalDate
         return filmStorage.createFilm(film);
     }
 
@@ -45,7 +51,9 @@ public class FilmService {
         if (filmOptional.isPresent()) {
             return filmOptional.get();
         } else {
-            throw new IllegalArgumentException("Фильм не найден");
+            String errorMessage = "Фильм не найден";
+            logger.error(errorMessage); // Логируем ошибку
+            throw new IllegalArgumentException(errorMessage);
         }
     }
 

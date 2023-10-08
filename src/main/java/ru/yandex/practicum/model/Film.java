@@ -8,6 +8,7 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class Film {
     private String description;
 
     @Past(message = "Дата релиза должна быть в прошлом")
-    private Date releaseDate;
+    private LocalDate releaseDate; // Изменили тип на LocalDate
 
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
@@ -43,7 +44,8 @@ public class Film {
     private LocalDate releaseDateAsLocalDate;
 
     public void setReleaseDate(LocalDate releaseDate) {
-        this.releaseDate = java.sql.Date.valueOf(releaseDate);
+        this.releaseDate = releaseDate;
         this.releaseDateAsLocalDate = releaseDate;
     }
 }
+
