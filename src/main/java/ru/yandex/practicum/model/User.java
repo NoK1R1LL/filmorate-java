@@ -2,12 +2,11 @@ package ru.yandex.practicum.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -28,5 +27,10 @@ public class User {
 
     @Past(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
+
+    // Список друзей (список идентификаторов друзей)
+    @ElementCollection
+    private Set<Long> friends = new HashSet<>();
+
 }
 
